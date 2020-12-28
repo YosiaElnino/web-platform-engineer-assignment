@@ -5,6 +5,7 @@ import { Grid, Container, Snackbar } from '@material-ui/core';
 import { css } from '@emotion/react';
 import MyListCard from '../components/MyListCard';
 import { Skeleton, Alert } from '@material-ui/lab';
+import EmptyState from '../components/EmptyState';
 
 
 const MyPokemonList = () => {
@@ -42,6 +43,8 @@ const MyPokemonList = () => {
     setList(cache.myList)
     setLoading(false)
   }, [])
+
+  if (!list.length) return <EmptyState />
 
   return (
     <>

@@ -8,6 +8,7 @@ import mq from '../config/mediaQueries';
 import { css } from '@emotion/react';
 import { Button, Card, CardContent, Container, Grid, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Snackbar } from '@material-ui/core';
 import { Skeleton, Alert } from '@material-ui/lab';
+import ErrorState from '../components/ErrorState';
 
 const PokemonDetail = () => {
   const [open, setOpen] = useState(false)
@@ -137,7 +138,7 @@ const PokemonDetail = () => {
     )
   }
 
-  if (error) return <h1>{error.message}</h1>
+  if (error) return <ErrorState />
 
   return (
     <>

@@ -7,6 +7,7 @@ import { Pagination, Skeleton } from '@material-ui/lab';
 import PokemonCard from '../components/PokemonCard';
 import client from '../config/graphql';
 import { css } from '@emotion/react';
+import ErrorState from '../components/ErrorState';
 
 const PokemonList = () => {
   const [offset, setOffset] = useState(1)
@@ -38,7 +39,7 @@ const PokemonList = () => {
     topPage.current.scrollIntoView()
   }
 
-  if(error) return <h1>{ error.message }</h1>
+  if (error) return <ErrorState />
 
   return (
     <>
