@@ -1,7 +1,8 @@
 {
-  "name": "web-platform-engineer-assignment",
+  "name": "pokepedia",
   "version": "0.1.0",
   "private": true,
+  "author": "Yosia Elnino",
   "dependencies": {
     "@apollo/client": "^3.3.6",
     "@emotion/babel-preset-css-prop": "^11.0.0",
