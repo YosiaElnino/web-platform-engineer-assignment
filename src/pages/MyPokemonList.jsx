@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import client from '../config/graphql';
 import { GET_MY_LIST } from '../config/query';
-import { Grid, Container } from '@material-ui/core';
+import { Grid, Container, Snackbar } from '@material-ui/core';
 import { css } from '@emotion/react';
 import MyListCard from '../components/MyListCard';
-import { Skeleton } from '@material-ui/lab';
+import { Skeleton, Alert } from '@material-ui/lab';
+
 
 const MyPokemonList = () => {
   const [list, setList] = useState([])
   const [isLoading, setLoading] = useState(false)
+  const [openAlert, setOpenAlert] = useState(false)
 
   const releasePokemon = (nickname) => {
     const { myList: currentList } = client.readQuery({
@@ -26,6 +28,10 @@ const MyPokemonList = () => {
 
     localStorage.setItem('myList', JSON.stringify({myList: newList}))
     setList(newList)
+  }
+
+  const closeAlert = () => {
+    setOpenAlert(false)
   }
 
   useEffect(() => {
@@ -58,12 +64,27 @@ const MyPokemonList = () => {
             ) : (
               list.map(pokemon => {
                 return (
-                  <MyListCard key={pokemon.nickname} pokemon={pokemon} releasePokemon={releasePokemon} />
+                  <MyListCard key={pokemon.nickname} pokemon={pokemon} releasePokemon={releasePokemon} setOpenAlert={setOpenAlert} />
                 )
               })
             )
           }
         </Grid>
+        <Snackbar
+          open={openAlert} 
+          autoHideDuration={2000}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          onClose={closeAlert}
+        >
+          <Alert
+            elevation={6}
+            variant="filled"
+            severity="success"
+            onClose={closeAlert}
+          >
+            Pokemon has been released
+          </Alert>
+        </Snackbar>
       </Container>
     </>
   )

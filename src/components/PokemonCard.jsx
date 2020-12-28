@@ -6,6 +6,7 @@ import mq from '../config/mediaQueries';
 
 const PokemonCard = (props) => {
   const name = props.pokemon.name[0].toUpperCase() + props.pokemon.name.slice(1);
+  
   const getOwnedTotal = () => {
     let count = 0;
     props.myList.forEach(pokemon => {

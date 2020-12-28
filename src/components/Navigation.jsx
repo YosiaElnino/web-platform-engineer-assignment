@@ -3,8 +3,24 @@ import Hidden from '@material-ui/core/Hidden';
 import { BottomNavigation, BottomNavigationAction } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import { css } from '@emotion/react';
-// import { Home } from '@material-ui/icons';
-// import { Pokeball } from 'mdi-material-ui';
+import Pokeball from '../assets/pokeicon.svg';
+import Trainer from '../assets/trainer.svg';
+
+const PokeballIcon = () => {
+  return (
+    <img css={css`
+      width: 32px;
+    `} src={Pokeball} alt="pokeball"/>
+  )
+}
+
+const TrainerIcon = () => {
+  return (
+    <img css={css`
+      width: 32px;
+    `} src={Trainer} alt="pokeball"/>
+  )
+}
 
 export default function Navigation () {
   const pathname = window.location.pathname;
@@ -19,22 +35,22 @@ export default function Navigation () {
         width: 100%;
         position: fixed;
         bottom: 0;
-      `} showLabels style={{backgroundColor: '#FFDE00'}} value={value} onChange={handlePageChange}>
+      `} style={{backgroundColor: '#FFDE00'}} value={value} onChange={handlePageChange}>
         <BottomNavigationAction 
           component={Link}
           to='/'
-          label='Home'
+          label='Pokemons'
           value='/'
           style={{color: '#3B4CCA'}}
-          // icon={<Home />}
+          icon={<PokeballIcon />}
         />
         <BottomNavigationAction 
           component={Link}
           to='/mylist'
-          label='Pokedex'
+          label='My List'
           value='/mylist'
           style={{color: '#3B4CCA'}}
-          // icon={<Pokeball />}
+          icon={<TrainerIcon />}
         />
       </BottomNavigation>
     </Hidden>

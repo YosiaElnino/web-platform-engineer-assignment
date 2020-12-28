@@ -6,19 +6,24 @@ import client from '../config/graphql';
 import PokemonData from '../components/PokemonData';
 import mq from '../config/mediaQueries';
 import { css } from '@emotion/react';
-import { Button, Card, CardContent, Container, Grid, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from '@material-ui/core';
-import { Skeleton } from '@material-ui/lab';
+import { Button, Card, CardContent, Container, Grid, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Snackbar } from '@material-ui/core';
+import { Skeleton, Alert } from '@material-ui/lab';
 
 const PokemonDetail = () => {
   const [open, setOpen] = useState(false)
   const [openFailed, setOpenFailed] = useState(false)
   const [openInput, setOpenInput] = useState(false)
+  const [openAlert, setOpenAlert] = useState(false)
   const [nickname, setNickname] = useState('')
   const [isValid, setValid] = useState(true)
   const params = useParams()
   const {loading, error, data} = useQuery(GET_POKEMON, {
     variables: { name: params.name }
   })
+
+  const AlertContainer = (props) => {
+    return <Alert elevation={6} variant="filled" {...props} />;
+  }
 
   const catchPokemon = () => {
     const random = Math.floor(Math.random() * 2)
@@ -36,6 +41,11 @@ const PokemonDetail = () => {
 
   const handleClick = () => {
     setOpenFailed(false)
+  }
+
+  const handleChange = (event) => {
+    event.preventDefault()
+    setNickname(event.target.value)
   }
 
   const validateNickname = () => {
@@ -58,13 +68,13 @@ const PokemonDetail = () => {
     if (validateNickname()) {
       addToMyList(nickname)
       setOpenInput(false)
+      setOpenAlert(true)
       setNickname('')
     } 
   }
 
-  const handleChange = (event) => {
-    event.preventDefault()
-    setNickname(event.target.value)
+  const closeAlert = () => {
+    setOpenAlert(false)
   }
 
   const addToMyList = (nickname) => {
@@ -123,7 +133,7 @@ const PokemonDetail = () => {
 
   const renderError = () => {
     if (!isValid) return (
-      <p>Pokemon's name must be unique</p>
+      <p css={css`color: #811111`}>nickname must be unique</p>
     )
   }
 
@@ -132,6 +142,7 @@ const PokemonDetail = () => {
   return (
     <>
       <Container maxWidth="lg" css={css `
+          margin-top: 16px;
           @media (max-width: 600px) {
             padding-bottom: 80px;
           }
@@ -185,14 +196,14 @@ const PokemonDetail = () => {
               }
               {
                 loading? (
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} md={6}>
                     <Skeleton css={css`
                       text-align: center;
                       margin: auto`
                     } variant="rect" width={500} height={300} />
                   </Grid>
                 ):(
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} md={6}>
                     <PokemonData pokemon={data.pokemon} colors={cardColors} />
                   </Grid>
                 )
@@ -204,12 +215,24 @@ const PokemonDetail = () => {
           open={open}
           disableEnforceFocus
           aria-labelledby={"modal-title-" + params.name}
+          titleStyle={{textAlign: "center"}}
+          PaperProps={{
+            style: {
+              backgroundColor: getBackrgound()
+            },
+          }}
         >
-          <DialogTitle id={"modal-title-" + params.name}>
+          <DialogTitle css={css`
+            text-align: center;
+          `} id={"modal-title-" + params.name}>
             Catching...
           </DialogTitle>
           <DialogContent>
-            <img src="https://i.pinimg.com/originals/13/ba/5b/13ba5b73cec2ee78a3a0fe3c8d58ac5f.gif" alt="catch"/>
+            <img css={css`
+              @media (max-width: 600px) {
+                width: 200px;
+              }
+            `} src="https://i.pinimg.com/originals/13/ba/5b/13ba5b73cec2ee78a3a0fe3c8d58ac5f.gif" alt="catch"/>
           </DialogContent>
         </Dialog>
         <Dialog
@@ -217,6 +240,12 @@ const PokemonDetail = () => {
           disableEnforceFocus
           aria-labelledby={"failed-title-" + params.name}
           aria-describedby={"failed-dialog-" + params.name}
+          titleStyle={{textAlign: "center"}}
+          PaperProps={{
+            style: {
+              backgroundColor: getBackrgound()
+            },
+          }}
         >
           <DialogTitle id={"failed-title-" + params.name}>
             Oops...
@@ -232,19 +261,51 @@ const PokemonDetail = () => {
           open={openInput}
           disableEnforceFocus
           aria-labelledby={"input-title-" + params.name}
+          titleStyle={{textAlign: "center"}}
+          fullWidth={true}
+          maxWidth='sm'
+          PaperProps={{
+            style: {
+              backgroundColor: getBackrgound()
+            },
+          }}
         >
-          <DialogTitle id={"input-title-" + params.name}>
+          <DialogTitle css={css`text-align: center`} id={"input-title-" + params.name}>
             Success!
           </DialogTitle>
-          <DialogContent>
-            <h5>Enter your pokemon name</h5>
+          <DialogContent css={css`
+            text-align: center;
+          `}>
+            <div css={mq({
+              'background-color': '#FFFFFF99',
+              'border-radius': '50%',
+              'text-align': 'center',
+              margin: 'auto',
+              width: ['180px', '220px', '280px', '320px'],
+              height: ['180px', '220px', '280px', '320px']
+            })}>
+              <img css={mq({
+                width: ['150px', '200px', '250px', '300px'],
+                'margin-top': '32px'
+              })} src={`https://pokeres.bastionbot.org/images/pokemon/${data?.pokemon?.id}.png`} alt={data?.pokemon?.name}/>
+            </div>
+            <TextField style={{marginTop: '24px'}} onChange={event => handleChange(event)} value={nickname} label="Enter Nickname" variant="outlined" />
             {renderError()}
-            <TextField onChange={event => handleChange(event)} value={nickname} label="Name" variant="outlined" />
           </DialogContent>
           <DialogActions>
             <Button onClick={() => handleSubmit()}>Save Pokemon</Button>
           </DialogActions>
         </Dialog>
+        <Snackbar
+          open={openAlert} 
+          autoHideDuration={2000}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          onClose={closeAlert}
+        >
+          <AlertContainer severity="success" onClose={closeAlert} >
+            Pokemon has been saved
+          </AlertContainer>
+        </Snackbar>
       </Container>
     </>
   )
